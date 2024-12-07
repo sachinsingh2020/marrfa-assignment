@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogTitle, DialogContent, TextField, Button } from "@mui/material";
 import toast from "react-hot-toast";
 
-const BlogModal = ({ open, handleClose, handleSave }) => {
+const BlogModal = ({ open, handleClose, handleSave, editingBlog }) => {
     const [formData, setFormData] = useState({
         blogTitle: "",
         blogContent: "",
@@ -10,6 +10,20 @@ const BlogModal = ({ open, handleClose, handleSave }) => {
     });
 
     const [preview, setPreview] = useState(null);
+
+    useEffect(() => {
+        if (editingBlog) {
+            setFormData({
+                blogTitle: editingBlog.blogTitle,
+                blogContent: editingBlog.blogContent,
+                blogImage: editingBlog.blogImage,
+            });
+            setPreview(editingBlog.blogImage);
+        } else {
+            setFormData({ blogTitle: "", blogContent: "", blogImage: null });
+            setPreview(null);
+        }
+    }, [editingBlog]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,7 +50,7 @@ const BlogModal = ({ open, handleClose, handleSave }) => {
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
             <DialogTitle className="text-xl font-bold text-blue-600 text-center">
-                Add New Blog
+                {editingBlog ? "Edit Blog" : "Add New Blog"}
             </DialogTitle>
             <DialogContent>
                 <div className="flex flex-col gap-4">
@@ -82,7 +96,7 @@ const BlogModal = ({ open, handleClose, handleSave }) => {
                         onClick={handleSubmit}
                         className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow"
                     >
-                        Save Blog
+                        {editingBlog ? "Update Blog" : "Save Blog"}
                     </Button>
                 </div>
             </DialogContent>
